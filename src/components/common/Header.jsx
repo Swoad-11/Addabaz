@@ -5,6 +5,7 @@ import Logout from "../auth/Logout";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useProfile } from "../../hooks/useProfile";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 export default function Header() {
   const { auth } = useAuth();
@@ -40,7 +41,7 @@ export default function Header() {
               </span>
               <img
                 className="max-h-[32px] max-w-[32px] lg:max-h-[44px] lg:max-w-[44px] rounded-full"
-                src={`${import.meta.env.VITE_SERVER_BASE_URL}/${user.avatar}`}
+                src={getImageUrl(user?.avatar)}
                 alt="avatar"
               />
             </Link>

@@ -16,7 +16,7 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       try {
         const response = await api.get(
-          `${import.meta.env.VITE_SERVER_BASE_URL}/profile/${auth?.user?.id}`
+          `/profile/${auth?.user?.id}`
         );
         if (response.status === 200) {
           dispatch({
@@ -28,7 +28,7 @@ export default function ProfilePage() {
         console.error(error);
         dispatch({
           type: actions.profile.DATA_FETCH_ERROR,
-          error: err.message,
+          error: error.message,
         });
       }
     };

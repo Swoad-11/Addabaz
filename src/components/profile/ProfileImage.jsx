@@ -4,6 +4,7 @@ import useAxios from "../../hooks/useAxios";
 import { useProfile } from "../../hooks/useProfile";
 
 import { actions } from "../../actions";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const ProfileImage = () => {
   const { state, dispatch } = useProfile();
@@ -13,21 +14,19 @@ const ProfileImage = () => {
   const handleImageUpload = (event) => {
     event.preventDefault();
 
-    fileUploaderRef.current.addEventListener("change", updateImageDisplay);
     fileUploaderRef.current.click();
   };
 
   const updateImageDisplay = async () => {
     try {
       const formData = new FormData();
+      if (!fileUploaderRef.current.files.length) return;
       for (const file of fileUploaderRef.current.files) {
         formData.append("avatar", file);
       }
 
       const response = await api.post(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/profile/${
-          state?.user?.id
-        }/avatar`,
+        `/profile/${state?.user?.id}/avatar`,
         formData
       );
       if (response.status === 200) {
@@ -41,6 +40,9 @@ const ProfileImage = () => {
         type: actions.profile.DATA_FETCH_ERROR,
         error: error.message,
       });
+    } finally {
+      // allow picking the same file again
+      fileUploaderRef.current.value = "";
     }
   };
 
@@ -48,7 +50,7 @@ const ProfileImage = () => {
     <div className="relative mb-8 max-h-[180px] max-w-[180px] rounded-full lg:mb-11 lg:max-h-[218px] lg:max-w-[218px]">
       <img
         className="max-w-full rounded-full"
-        src={`${import.meta.env.VITE_SERVER_BASE_URL}/${state?.user?.avatar}`}
+        src={getImageUrl(state?.user?.avatar)}
         alt={state?.user?.firstName}
       />
 
@@ -60,7 +62,14 @@ const ProfileImage = () => {
         >
           <img src={EditIcon} alt="Edit" />
         </button>
-        <input id="file" type="file" ref={fileUploaderRef} hidden />
+        <input
+          id="file"
+          type="file"
+          accept="image/*"
+          ref={fileUploaderRef}
+          onChange={updateImageDisplay}
+          hidden
+        />
       </form>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
-import { api } from "../api";
+import { api, SERVER_BASE_URL } from "../api";
 import { useAuth } from "./useAuth";
 
 const useAxios = () => {
@@ -27,14 +27,14 @@ const useAxios = () => {
 
         // If the error status is 401 and there is no originalRequest._retry flag,
         // it means the token has expired and we need to refresh it
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           // eslint-disable-next-line no-useless-catch
           try {
             const refreshToken = auth?.refreshToken;
             const response = await axios.post(
-              `${import.meta.env.VITE_SERVER_BASE_URL}/auth/refresh-token`,
+              `${SERVER_BASE_URL}/auth/refresh-token`,
               { refreshToken }
             );
             const { token } = response.data;

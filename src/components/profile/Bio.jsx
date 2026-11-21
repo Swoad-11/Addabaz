@@ -17,7 +17,7 @@ const Bio = () => {
 
     try {
       const response = await api.patch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/profile/${state?.user?.id}`,
+        `/profile/${state?.user?.id}`,
         { bio }
       );
 

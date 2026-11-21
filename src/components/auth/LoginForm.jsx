@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
+import { SERVER_BASE_URL } from "../../api";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function LoginForm() {
   const submitForm = async (formData) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/auth/login`,
+        `${SERVER_BASE_URL}/auth/login`,
         formData
       );
 
@@ -34,7 +35,9 @@ export default function LoginForm() {
       console.log(error);
       setError("root.random", {
         type: "random",
-        message: `User with email ${formData.email} is not found`,
+        message:
+          error.response?.data?.error ||
+          "Could not reach the server. Please try again.",
       });
     }
   };
@@ -47,7 +50,7 @@ export default function LoginForm() {
         <input
           {...register("email", { required: "Email ID is Required" })}
           className={`auth-input ${
-            !!errors.email ? "border-red-500" : "border-gray-200"
+            errors.email ? "border-red-500" : "border-gray-200"
           }`}
           type="email"
           name="email"
@@ -65,7 +68,7 @@ export default function LoginForm() {
             },
           })}
           className={`auth-input ${
-            !!errors.password ? "border-red-500" : "border-gray-200"
+            errors.password ? "border-red-500" : "border-gray-200"
           }`}
           type="password"
           name="password"
