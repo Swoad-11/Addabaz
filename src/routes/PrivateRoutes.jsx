@@ -5,22 +5,15 @@ import ProfileProvider from "../providers/ProfileProvider";
 
 export default function PrivateRoutes() {
   const { auth } = useAuth();
+
+  if (!auth?.authToken) return <Navigate to="/login" replace />;
+
   return (
-    <>
-      {auth.authToken ? (
-        <>
-          <ProfileProvider>
-            <Header />
-            <main className="mx-auto max-w-[1020px] py-8">
-              <div className="container">
-                <Outlet />
-              </div>
-            </main>
-          </ProfileProvider>
-        </>
-      ) : (
-        <Navigate to="/login" />
-      )}
-    </>
+    <ProfileProvider>
+      <Header />
+      <main className="container max-w-6xl py-6 sm:py-8">
+        <Outlet />
+      </main>
+    </ProfileProvider>
   );
 }

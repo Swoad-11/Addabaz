@@ -1,53 +1,57 @@
-import Logo from "../../assets/images/logo.png";
-import HomeIcon from "../../assets/icons/home.svg";
-import Notification from "../../assets/icons/notification.svg";
+import { Link, NavLink } from "react-router-dom";
+import Logo from "./Logo";
+import Avatar from "./Avatar";
 import Logout from "../auth/Logout";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import { useProfile } from "../../hooks/useProfile";
-import { getImageUrl } from "../../utils/getImageUrl";
+import { BellIcon, HomeIcon, UserIcon } from "./Icons";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
+
+const navClass = ({ isActive }) =>
+  `flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-semibold transition-all ${
+    isActive
+      ? "bg-white/[0.08] text-white ring-1 ring-inset ring-white/10"
+      : "text-slate-400 hover:bg-white/[0.04] hover:text-white"
+  }`;
 
 export default function Header() {
-  const { auth } = useAuth();
-  const { state } = useProfile();
+  const user = useCurrentUser();
+  const fullName = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
 
-  const user = state?.user ?? auth?.user;
   return (
-    <>
-      <nav className="sticky top-0 z-50 border-b border-[#3F3F3F] bg-[#1E1F24] py-4">
-        <div className="container flex flex-col items-center justify-between gap-6 sm:flex-row">
-          <Link to="/">
-            <img
-              className="max-w-[100px] lg:max-w-[140px]"
-              src={Logo}
-              alt="logo"
-            />
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-ink-950/70 backdrop-blur-xl">
+      <div className="container flex h-16 max-w-6xl items-center justify-between gap-4">
+        <Link to="/" aria-label="FaceHook home">
+          <Logo showText={false} className="sm:hidden" />
+          <Logo className="hidden sm:inline-flex" />
+        </Link>
+
+        <nav className="flex items-center gap-1">
+          <NavLink to="/" end className={navClass}>
+            <HomeIcon className="h-[18px] w-[18px]" />
+            <span className="hidden sm:inline">Home</span>
+          </NavLink>
+          <NavLink to="/me" className={navClass}>
+            <UserIcon className="h-[18px] w-[18px]" />
+            <span className="hidden sm:inline">Profile</span>
+          </NavLink>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <button className="icon-btn relative" aria-label="Notifications">
+            <BellIcon className="h-[18px] w-[18px]" />
+            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-brand-400 ring-2 ring-ink-950" />
+          </button>
+          <Link
+            to="/me"
+            className="flex items-center gap-2.5 rounded-xl py-1 pl-1 pr-1 transition-all hover:bg-white/[0.05] md:pr-3"
+          >
+            <Avatar src={user?.avatar} name={fullName} className="h-9 w-9" textClass="text-xs" />
+            <span className="hidden max-w-[140px] truncate text-sm font-semibold md:inline">
+              {fullName}
+            </span>
           </Link>
-
-          <div className="flex items-center space-x-4">
-            <Link to="/" className="btn-primary">
-              <img src={HomeIcon} alt="Home" />
-              Home
-            </Link>
-            <button className="icon-btn">
-              <img src={Notification} alt="Notification" />
-            </button>
-
-            <Logout />
-
-            <Link to="/me" className="flex-center !ml-8 gap-3">
-              <span className="text-lg font-medium lg:text-xl">
-                {user?.firstName} {user?.lastName}
-              </span>
-              <img
-                className="max-h-[32px] max-w-[32px] lg:max-h-[44px] lg:max-w-[44px] rounded-full"
-                src={getImageUrl(user?.avatar)}
-                alt="avatar"
-              />
-            </Link>
-          </div>
+          <Logout />
         </div>
-      </nav>
-    </>
+      </div>
+    </header>
   );
 }

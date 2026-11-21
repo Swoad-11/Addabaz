@@ -1,76 +1,80 @@
-import { useRef } from "react";
-import EditIcon from "../../assets/icons/edit.svg";
+import { useRef, useState } from "react";
 import useAxios from "../../hooks/useAxios";
+import { useAuth } from "../../hooks/useAuth";
 import { useProfile } from "../../hooks/useProfile";
-
 import { actions } from "../../actions";
-import { getImageUrl } from "../../utils/getImageUrl";
+import Avatar from "../common/Avatar";
+import { CameraIcon, Spinner } from "../common/Icons";
+
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 const ProfileImage = () => {
   const { state, dispatch } = useProfile();
+  const { auth, setAuth } = useAuth();
   const { api } = useAxios();
-  const fileUploaderRef = useRef();
+  const fileRef = useRef();
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleImageUpload = (event) => {
-    event.preventDefault();
+  const user = state?.user;
+  const fullName = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
 
-    fileUploaderRef.current.click();
-  };
+  const upload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow picking the same file again
+    if (!file) return;
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError("Images can be up to 4 MB.");
+      return;
+    }
 
-  const updateImageDisplay = async () => {
+    setUploading(true);
+    setError("");
     try {
       const formData = new FormData();
-      if (!fileUploaderRef.current.files.length) return;
-      for (const file of fileUploaderRef.current.files) {
-        formData.append("avatar", file);
-      }
-
-      const response = await api.post(
-        `/profile/${state?.user?.id}/avatar`,
-        formData
-      );
-      if (response.status === 200) {
-        dispatch({
-          type: actions.profile.IMAGE_UPDATED,
-          data: response.data,
-        });
-      }
-    } catch (error) {
-      dispatch({
-        type: actions.profile.DATA_FETCH_ERROR,
-        error: error.message,
-      });
+      formData.append("avatar", file);
+      const response = await api.post(`/profile/${user?.id}/avatar`, formData);
+      dispatch({ type: actions.profile.IMAGE_UPDATED, data: response.data });
+      // keep the header and composer in sync, also after a refresh
+      setAuth({ ...auth, user: { ...auth.user, avatar: response.data.avatar } });
+    } catch (err) {
+      setError(err.response?.data?.error || "Upload failed. Please try again.");
     } finally {
-      // allow picking the same file again
-      fileUploaderRef.current.value = "";
+      setUploading(false);
     }
   };
 
   return (
-    <div className="relative mb-8 max-h-[180px] max-w-[180px] rounded-full lg:mb-11 lg:max-h-[218px] lg:max-w-[218px]">
-      <img
-        className="max-w-full rounded-full"
-        src={getImageUrl(state?.user?.avatar)}
-        alt={state?.user?.firstName}
-      />
-
-      <form id="form" encType="multipart/form-data">
-        <button
-          className="flex-center absolute bottom-4 right-4 h-7 w-7 rounded-full bg-black/50 hover:bg-black/80"
-          onClick={handleImageUpload}
-          type="submit"
-        >
-          <img src={EditIcon} alt="Edit" />
-        </button>
-        <input
-          id="file"
-          type="file"
-          accept="image/*"
-          ref={fileUploaderRef}
-          onChange={updateImageDisplay}
-          hidden
+    <div className="relative">
+      <div className="relative rounded-full bg-ink-950 p-1.5">
+        <Avatar
+          src={user?.avatar}
+          name={fullName}
+          className="h-32 w-32 sm:h-40 sm:w-40"
+          textClass="text-4xl sm:text-5xl"
         />
-      </form>
+        {uploading && (
+          <div className="flex-center absolute inset-1.5 rounded-full bg-ink-950/70">
+            <Spinner className="h-8 w-8 text-brand-300" />
+          </div>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={() => fileRef.current.click()}
+        disabled={uploading}
+        className="flex-center absolute bottom-2 right-2 h-10 w-10 rounded-full bg-gradient-to-br from-brand-400 to-sky-400 text-ink-950 shadow-glow ring-4 ring-ink-950 transition-transform hover:scale-105 disabled:opacity-60"
+        aria-label="Change profile picture"
+        title="Change profile picture"
+      >
+        <CameraIcon className="h-5 w-5" />
+      </button>
+      <input ref={fileRef} type="file" accept="image/*" hidden onChange={upload} />
+      {error && (
+        <p className="absolute left-1/2 top-full mt-2 w-max max-w-[80vw] -translate-x-1/2 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-300">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

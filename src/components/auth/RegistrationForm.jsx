@@ -1,9 +1,10 @@
-import Field from "../common/Field";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
+import { useAuth } from "../../hooks/useAuth";
 import { SERVER_BASE_URL } from "../../api";
+import AuthInput from "./AuthInput";
+import { ArrowRightIcon, LockIcon, MailIcon, Spinner, UserIcon } from "../common/Icons";
 
 export default function RegistrationForm() {
   const navigate = useNavigate();
@@ -11,102 +12,107 @@ export default function RegistrationForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
     setError,
   } = useForm();
 
-  const submitForm = async (formData) => {
+  const submitForm = async (values) => {
+    const { email, password, firstName, lastName } = values;
+    const formData = { email, password, firstName, lastName };
     try {
-      const response = await axios.post(
-        `${SERVER_BASE_URL}/auth/register`,
-        formData
-      );
-
-      if (response.status === 201) {
-        const { user, token } = response.data;
-        setAuth({
-          user,
-          authToken: token.token,
-          refreshToken: token.refreshToken,
-        });
-        navigate("/");
-      }
+      const response = await axios.post(`${SERVER_BASE_URL}/auth/register`, formData);
+      const { user, token } = response.data;
+      setAuth({ user, authToken: token.token, refreshToken: token.refreshToken });
+      navigate("/");
     } catch (error) {
-      setError("root.random", {
-        type: "random",
+      setError("root.server", {
+        type: "server",
         message:
-          error.response?.data?.error ||
-          error.response?.data?.message ||
-          "Could not reach the server. Please try again.",
+          error.response?.status === 409
+            ? "An account with this email already exists. Try signing in."
+            : error.response?.data?.error ||
+              error.response?.data?.message ||
+              "Could not reach the server. Please try again.",
       });
     }
   };
 
-  const inputClass = (hasError) =>
-    `auth-input ${hasError ? "border-red-500" : "border-gray-200"}`;
-
   return (
-    <form
-      className="border-b border-[#3F3F3F] pb-10 lg:pb-[30px]"
-      onSubmit={handleSubmit(submitForm)}
-    >
-      <Field label="First Name" error={errors.firstName}>
-        <input
-          {...register("firstName", { required: "First name is required" })}
-          className={inputClass(!!errors.firstName)}
-          type="text"
-          name="firstName"
+    <form onSubmit={handleSubmit(submitForm)} noValidate>
+      <div className="grid gap-x-4 sm:grid-cols-2">
+        <AuthInput
           id="firstName"
+          label="First name"
+          icon={UserIcon}
+          placeholder="Jane"
+          autoComplete="given-name"
+          error={errors.firstName}
+          {...register("firstName", { required: "Required" })}
         />
-      </Field>
-
-      <Field label="Last Name" error={errors.lastName}>
-        <input
-          {...register("lastName", { required: "Last name is required" })}
-          className={inputClass(!!errors.lastName)}
-          type="text"
-          name="lastName"
+        <AuthInput
           id="lastName"
+          label="Last name"
+          placeholder="Doe"
+          autoComplete="family-name"
+          error={errors.lastName}
+          {...register("lastName", { required: "Required" })}
         />
-      </Field>
+      </div>
 
-      <Field label="Email" error={errors.email}>
-        <input
-          {...register("email", { required: "Email ID is Required" })}
-          className={inputClass(!!errors.email)}
-          type="email"
-          name="email"
-          id="email"
-        />
-      </Field>
+      <AuthInput
+        id="email"
+        label="Email"
+        type="email"
+        icon={MailIcon}
+        placeholder="you@example.com"
+        autoComplete="email"
+        error={errors.email}
+        {...register("email", {
+          required: "Please enter your email",
+          pattern: { value: /^\S+@\S+\.\S+$/, message: "That doesn't look like an email" },
+        })}
+      />
 
-      <Field label="Password" error={errors.password}>
-        <input
-          {...register("password", {
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Your password must be at least 8 characters",
-            },
-          })}
-          className={inputClass(!!errors.password)}
-          type="password"
-          name="password"
-          id="password"
-        />
-      </Field>
+      <AuthInput
+        id="password"
+        label="Password"
+        type="password"
+        icon={LockIcon}
+        placeholder="At least 8 characters"
+        autoComplete="new-password"
+        error={errors.password}
+        {...register("password", {
+          required: "Please choose a password",
+          minLength: { value: 8, message: "Use at least 8 characters" },
+        })}
+      />
 
-      <p className="text-red-600">{errors?.root?.random?.message}</p>
+      <AuthInput
+        id="confirmPassword"
+        label="Confirm password"
+        type="password"
+        icon={LockIcon}
+        placeholder="Type it again"
+        autoComplete="new-password"
+        error={errors.confirmPassword}
+        {...register("confirmPassword", {
+          required: "Please confirm your password",
+          validate: (value) => value === watch("password") || "Passwords don't match",
+        })}
+      />
 
-      <Field>
-        <button
-          className="auth-input bg-lwsGreen font-bold text-deepDark transition-all hover:opacity-90 disabled:opacity-60"
-          type="submit"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creating account..." : "Register"}
-        </button>
-      </Field>
+      {errors?.root?.server && (
+        <div role="alert" className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          {errors.root.server.message}
+        </div>
+      )}
+
+      <button type="submit" className="btn-primary w-full py-3 text-base" disabled={isSubmitting}>
+        {isSubmitting ? <Spinner /> : null}
+        {isSubmitting ? "Creating account..." : "Create account"}
+        {!isSubmitting && <ArrowRightIcon className="h-4 w-4" />}
+      </button>
     </form>
   );
 }
