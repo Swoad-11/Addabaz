@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import Logo from "./Logo";
 import Avatar from "./Avatar";
 import Logout from "../auth/Logout";
-import { BellIcon, HomeIcon, UserIcon } from "./Icons";
+import { BellIcon, HomeIcon } from "./Icons";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 
 const navClass = ({ isActive }) =>
@@ -20,18 +20,13 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-ink-950/70 backdrop-blur-xl">
       <div className="container flex h-16 max-w-6xl items-center justify-between gap-4">
         <Link to="/" aria-label="Addabaz home">
-          <Logo showText={false} className="sm:hidden" />
-          <Logo className="hidden sm:inline-flex" />
+          <Logo />
         </Link>
 
         <nav className="flex items-center gap-1">
           <NavLink to="/" end className={navClass}>
             <HomeIcon className="h-[18px] w-[18px]" />
             <span className="hidden sm:inline">Home</span>
-          </NavLink>
-          <NavLink to="/me" className={navClass}>
-            <UserIcon className="h-[18px] w-[18px]" />
-            <span className="hidden sm:inline">Profile</span>
           </NavLink>
         </nav>
 

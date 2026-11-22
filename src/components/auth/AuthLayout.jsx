@@ -41,13 +41,15 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
       {/* Brand panel */}
-      <section className="relative hidden overflow-hidden border-r border-white/5 lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
+      <section className="relative hidden overflow-hidden border-r border-white/5 lg:flex lg:flex-col lg:gap-8 lg:px-12 lg:py-10 xl:px-16">
         <div className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-brand-400/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl" />
 
         <Logo className="relative" />
 
-        <div className="relative space-y-8">
+        {/* fixed gaps between blocks, centred in whatever height is left */}
+        <div className="relative my-auto flex flex-col gap-12">
+        <div className="space-y-8">
           <div>
             <h1 className="max-w-lg text-4xl font-extrabold leading-tight tracking-tight xl:text-5xl">
               Cha, golpo, <span className="text-gradient">adda.</span>
@@ -68,8 +70,10 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
           </ul>
         </div>
 
-        <div className="relative">
+        {/* decorative, so it's dropped on short screens instead of crowding the text */}
+        <div className="[@media(max-height:700px)]:hidden">
           <PreviewCard />
+        </div>
         </div>
       </section>
 
