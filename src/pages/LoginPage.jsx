@@ -9,7 +9,7 @@ export default function LoginPage() {
       subtitle="Sign in to see what your friends are sharing."
       footer={
         <>
-          New to FaceHook?{" "}
+          New to Addabaz?{" "}
           <Link to="/register" className="font-semibold text-brand-300 hover:text-brand-400 hover:underline">
             Create an account
           </Link>

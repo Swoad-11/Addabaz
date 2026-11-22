@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useProfile } from "../../hooks/useProfile";
-import { CommentIcon, HeartIcon, MailIcon, PencilIcon } from "../common/Icons";
+import { CommentIcon, HeartIcon, MailIcon, PencilIcon, SparklesIcon } from "../common/Icons";
 import Bio from "./Bio";
 import ProfileImage from "./ProfileImage";
 
@@ -18,9 +18,11 @@ const ProfileInfo = () => {
   const { state } = useProfile();
   const user = state?.user;
   const posts = state?.posts ?? [];
+  const stats = state?.stats ?? {};
 
-  const likes = posts.reduce((sum, p) => sum + (p.likes?.length ?? 0), 0);
-  const comments = posts.reduce((sum, p) => sum + (p.comments?.length ?? 0), 0);
+  // received counts follow the post list (so deleting a post updates them);
+  // given/made counts come from the server, they include other people's posts
+  const likesReceived = posts.reduce((sum, p) => sum + (p.likes?.length ?? 0), 0);
 
   return (
     <section className="card overflow-hidden p-0 sm:p-0">
@@ -41,10 +43,11 @@ const ProfileInfo = () => {
 
         <Bio key={user?.bio ?? ""} />
 
-        <div className="mt-6 grid grid-cols-3 divide-x divide-white/[0.06] rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.06]">
+        <div className="mt-6 grid w-full max-w-xl grid-cols-2 divide-white/[0.06] overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.06] max-sm:divide-y sm:grid-cols-4 sm:divide-x">
           <Stat value={posts.length} label="Posts" icon={PencilIcon} color="text-brand-300" />
-          <Stat value={likes} label="Likes" icon={HeartIcon} color="text-rose-400" />
-          <Stat value={comments} label="Comments" icon={CommentIcon} color="text-sky-400" />
+          <Stat value={stats.likesGiven ?? 0} label="Likes given" icon={HeartIcon} color="text-rose-400" />
+          <Stat value={stats.commentsMade ?? 0} label="Comments made" icon={CommentIcon} color="text-sky-400" />
+          <Stat value={likesReceived} label="Likes received" icon={SparklesIcon} color="text-amber-300" />
         </div>
       </div>
     </section>

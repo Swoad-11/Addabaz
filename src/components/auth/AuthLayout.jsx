@@ -50,10 +50,10 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
         <div className="relative space-y-8">
           <div>
             <h1 className="max-w-lg text-4xl font-extrabold leading-tight tracking-tight xl:text-5xl">
-              Share moments. <span className="text-gradient">Stay hooked.</span>
+              Cha, golpo, <span className="text-gradient">adda.</span>
             </h1>
             <p className="mt-4 max-w-md text-slate-400">
-              FaceHook is a friendly little social network for the people you care about.
+              Addabaz is your daily adda, online. Share what is going on, react to friends and keep the conversation going.
             </p>
           </div>
           <ul className="space-y-3">

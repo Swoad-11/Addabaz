@@ -1,8 +1,8 @@
-# FaceHook
+# Addabaz
 
-FaceHook is a small social network built with React. People can sign up, write posts with or without a photo, like and comment on posts, and edit their profile picture and bio.
+Addabaz (from আড্ডাবাজ, someone who loves a good adda) is a small social network built with React. It started as a course project called FaceHook. People can sign up, write posts with or without a photo, like and comment on posts, and edit their profile picture and bio.
 
-**Live site: [facehook-jet.vercel.app](https://facehook-jet.vercel.app)**
+**Live site: [addabaz.vercel.app](https://addabaz.vercel.app)**
 
 This repository is the frontend. The API lives in a separate repository, `backendServer-faceHook`, which is private.
 
@@ -13,7 +13,7 @@ This repository is the frontend. The API lives in a separate repository, `backen
 - Post composer for text, an image (up to 4 MB), or both.
 - Like and unlike posts, add comments, and delete your own comments.
 - Delete your own posts. The post author can also remove any comment on their post.
-- Profile page with a cover banner, profile picture upload, an editable bio, and counts of your posts, likes received and comments received.
+- Profile page with a cover banner, profile picture upload, an editable bio, and counts of your posts, the likes you have given, the comments you have written and the likes your posts have received.
 - Users without a profile picture get an avatar with their initials on a colour picked from their name.
 - Layout works from phone width up to wide desktop screens.
 
@@ -28,19 +28,19 @@ This repository is the frontend. The API lives in a separate repository, `backen
 | API | Express 4 running as a Vercel serverless function |
 | Database | MongoDB Atlas, through Mongoose |
 | Image storage | Vercel Blob |
-| Hosting | Vercel (two projects: `facehook` for this app, `facehook-api` for the API) |
+| Hosting | Vercel (two projects: `facehook` serves this app at addabaz.vercel.app, `facehook-api` serves the API) |
 
 ## How it fits together
 
 ```
-Browser ──> facehook-jet.vercel.app   (this repo, static React build)
+Browser ──> addabaz.vercel.app        (this repo, static React build)
    │
    └──── API calls ──> facehook-api.vercel.app   (Express on Vercel)
                           ├── MongoDB Atlas   users, posts, comments, likes
                           └── Vercel Blob     uploaded avatars and post images
 ```
 
-The API only accepts browser requests from the frontend's domain (CORS). Every route except sign-up, sign-in, token refresh and the health check needs a valid access token.
+The API only accepts browser requests from the frontend's domains (CORS). Every route except sign-up, sign-in, token refresh and the health check needs a valid access token.
 
 ## Project structure
 
@@ -122,6 +122,6 @@ The API deploys the same way from its own repository. Its Vercel project has Mon
 | PATCH | `/posts/:postId/like` | Like or unlike |
 | PATCH | `/posts/:postId/comment` | Add a comment |
 | DELETE | `/posts/:postId/comment/:commentId` | Delete a comment |
-| GET | `/profile/:userId` | A user and their posts |
+| GET | `/profile/:userId` | A user, their posts and activity counts |
 | PATCH | `/profile/:userId` | Update your name or bio |
 | POST | `/profile/:userId/avatar` | Upload your profile picture (multipart: `avatar`) |

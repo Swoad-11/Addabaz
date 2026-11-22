@@ -22,6 +22,7 @@ const profileReducer = (state, action) => {
         loading: false,
         user: action.data.user,
         posts: action.data.posts,
+        stats: action.data.stats ?? state.stats,
       };
     }
 

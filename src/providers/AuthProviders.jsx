@@ -2,11 +2,14 @@
 import { useEffect, useState } from "react";
 import { AuthContext } from "../context";
 
-const STORAGE_KEY = "facehook-auth";
+const STORAGE_KEY = "addabaz-auth";
+const OLD_STORAGE_KEY = "facehook-auth"; // before the rename
 
 const loadAuth = () => {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    // read-only: React may call this more than once (StrictMode)
+    const saved = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(OLD_STORAGE_KEY);
+    return JSON.parse(saved) || {};
   } catch {
     return {};
   }
@@ -23,6 +26,8 @@ const AuthProvider = ({ children }) => {
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
+      // the session now lives under the new key (or was logged out)
+      localStorage.removeItem(OLD_STORAGE_KEY);
     } catch {
       // storage unavailable (private mode etc.): stay logged in for this tab only
     }

@@ -19,7 +19,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-ink-950/70 backdrop-blur-xl">
       <div className="container flex h-16 max-w-6xl items-center justify-between gap-4">
-        <Link to="/" aria-label="FaceHook home">
+        <Link to="/" aria-label="Addabaz home">
           <Logo showText={false} className="sm:hidden" />
           <Logo className="hidden sm:inline-flex" />
         </Link>

@@ -5,7 +5,7 @@ export default function Logo({ className = "", showText = true }) {
       <img src="/favicon.svg" alt="" className="h-9 w-9 rounded-xl shadow-glow" />
       {showText && (
         <span className="text-xl font-extrabold tracking-tight">
-          Face<span className="text-gradient">Hook</span>
+          Adda<span className="text-gradient">baz</span>
         </span>
       )}
     </span>

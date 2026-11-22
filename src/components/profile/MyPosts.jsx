@@ -13,7 +13,7 @@ export default function MyPosts() {
   const removePost = (id) =>
     dispatch({
       type: actions.profile.DATA_FETCHED,
-      data: { user: state.user, posts: posts.filter((p) => p.id !== id) },
+      data: { user: state.user, posts: posts.filter((p) => p.id !== id), stats: state.stats },
     });
 
   return (
