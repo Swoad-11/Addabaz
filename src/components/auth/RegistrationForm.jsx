@@ -40,7 +40,7 @@ export default function RegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit(submitForm)} noValidate>
-      <div className="grid gap-x-4 sm:grid-cols-2">
+      <div className="grid gap-x-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
         <AuthInput
           id="firstName"
           label="First name"

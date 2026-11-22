@@ -39,9 +39,9 @@ function PreviewCard() {
 
 export default function AuthLayout({ title, subtitle, children, footer }) {
   return (
-    <main className="grid min-h-screen lg:grid-cols-2">
+    <main className="grid min-h-screen md:grid-cols-2">
       {/* Brand panel */}
-      <section className="relative hidden overflow-hidden border-r border-white/5 lg:flex lg:flex-col lg:gap-8 lg:px-12 lg:py-10 xl:px-16">
+      <section className="relative hidden overflow-hidden border-r border-white/5 md:flex md:flex-col md:gap-8 md:px-8 md:py-10 lg:px-12 xl:px-16">
         <div className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-brand-400/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl" />
 
@@ -51,7 +51,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
         <div className="relative my-auto flex flex-col gap-12">
         <div className="space-y-8">
           <div>
-            <h1 className="max-w-lg text-4xl font-extrabold leading-tight tracking-tight xl:text-5xl">
+            <h1 className="max-w-lg text-3xl font-extrabold leading-tight tracking-tight lg:text-4xl xl:text-5xl">
               Cha, golpo, <span className="text-gradient">adda.</span>
             </h1>
             <p className="mt-4 max-w-md text-slate-400">
@@ -70,8 +70,8 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
           </ul>
         </div>
 
-        {/* decorative, so it's dropped on short screens instead of crowding the text */}
-        <div className="[@media(max-height:700px)]:hidden">
+        {/* sample post; on short windows the page scrolls instead of hiding it */}
+        <div>
           <PreviewCard />
         </div>
         </div>
@@ -80,7 +80,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
       {/* Form panel */}
       <section className="flex items-center justify-center px-5 py-10 sm:px-8">
         <div className="w-full max-w-md animate-fade-up">
-          <Logo className="mb-8 lg:hidden" />
+          <Logo className="mb-8 md:hidden" />
           <h2 className="text-3xl font-extrabold tracking-tight">{title}</h2>
           <p className="mb-8 mt-2 text-slate-400">{subtitle}</p>
           <div className="card p-6 sm:p-8">{children}</div>
